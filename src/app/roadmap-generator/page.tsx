@@ -14,7 +14,7 @@ export default function RoadmapGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [mentorInput, setMentorInput] = useState("");
   const [mentorMessages, setMentorMessages] = useState<MentorMessage[]>([]);
-  const generateMessageId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const generateUniqueMessageId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
   const generate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,7 +38,7 @@ export default function RoadmapGeneratorPage() {
     const input = mentorInput.trim();
     if (!input) return;
 
-    setMentorMessages((messages) => [...messages, { id: generateMessageId(), role: "user", text: input }]);
+    setMentorMessages((messages) => [...messages, { id: generateUniqueMessageId(), role: "user", text: input }]);
     setMentorInput("");
 
     const response = await fetch("/api/mentor", {
@@ -48,7 +48,7 @@ export default function RoadmapGeneratorPage() {
     });
 
     const data = (await response.json()) as { reply: string };
-    setMentorMessages((messages) => [...messages, { id: generateMessageId(), role: "assistant", text: data.reply }]);
+    setMentorMessages((messages) => [...messages, { id: generateUniqueMessageId(), role: "assistant", text: data.reply }]);
   };
 
   return (
@@ -93,7 +93,7 @@ export default function RoadmapGeneratorPage() {
                 <article className="rounded-xl border border-white/10 bg-white/5 p-4">
                   <h4 className="mb-2 font-semibold">Skill Gap Analysis</h4>
                   <ul className="list-disc space-y-1 pl-5 text-sm text-white/80">
-                    {roadmap.missingSkills.map((skill) => (
+                    {roadmap.skillGaps.map((skill) => (
                       <li key={skill}>{skill}</li>
                     ))}
                   </ul>

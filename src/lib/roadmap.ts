@@ -16,7 +16,7 @@ export type RoadmapResult = {
   goal: string;
   estimatedDuration: string;
   roadmap: RoadmapStep[];
-  missingSkills: string[];
+  skillGaps: string[];
   strengths: string[];
   curatedResources: Resource[];
   milestones: string[];
@@ -103,7 +103,7 @@ export const generateRoadmap = (goal: string, skillInput: string, weeklyHours: n
     .map((skill) => skill.trim())
     .filter(Boolean);
 
-  const missingSkills = track.skills.filter(
+  const skillGaps = track.skills.filter(
     (skill) => !currentSkills.some((current) => current.toLowerCase() === skill.toLowerCase()),
   );
 
@@ -125,7 +125,7 @@ export const generateRoadmap = (goal: string, skillInput: string, weeklyHours: n
     goal,
     estimatedDuration: `${baseWeeks} weeks`,
     roadmap,
-    missingSkills,
+    skillGaps,
     strengths,
     curatedResources: track.resources,
     milestones: [

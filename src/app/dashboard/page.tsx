@@ -7,7 +7,7 @@ const modules = [
   { name: "Data Structures & Algorithms", progress: 70 },
   { name: "System Design", progress: 35 },
 ];
-const REVOKE_URL_DELAY_MS = 1000;
+const REVOKE_URL_DELAY_MS = 3000;
 
 export default function DashboardPage() {
   const completed = modules.filter((module) => module.progress === 100).length;
