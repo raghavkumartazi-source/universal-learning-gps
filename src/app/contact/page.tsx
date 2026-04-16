@@ -25,6 +25,11 @@ export default function ContactPage() {
     setSubmitted(true);
   };
 
+  const handleReset = () => {
+    setSubmitted(false);
+    setForm({ name: "", email: "", subject: "", message: "" });
+  };
+
   return (
     <div className="min-h-screen pt-20">
       {/* Hero */}
@@ -105,7 +110,7 @@ export default function ContactPage() {
                     Thank you for reaching out. We will get back to you within 24 hours.
                   </p>
                   <button
-                    onClick={() => { setSubmitted(false); setForm({ name: "", email: "", subject: "", message: "" }); }}
+                    onClick={handleReset}
                     className="btn-primary px-6 py-3"
                   >
                     Send Another Message

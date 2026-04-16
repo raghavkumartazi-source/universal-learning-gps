@@ -56,9 +56,9 @@ const recommendations = [
 ];
 
 const chatMessages = [
-  { role: "assistant", content: "Hi! I am your AI Career Mentor. How can I help you today?" },
-  { role: "user", content: "I am struggling with understanding neural networks. Where should I start?" },
-  { role: "assistant", content: "Great question! Since you have completed Python foundations and are working on data analysis, I recommend starting with the 3Blue1Brown Neural Networks series on YouTube. It provides excellent visual intuitions before you dive into code. After that, try the fast.ai Practical Deep Learning course." },
+  { role: "assistant", content: "Hi! I'm your AI Career Mentor. How can I help you today?" },
+  { role: "user", content: "I'm struggling with understanding neural networks. Where should I start?" },
+  { role: "assistant", content: "Great question! Since you've completed Python foundations and are working on data analysis, I recommend starting with the 3Blue1Brown Neural Networks series on YouTube. It provides excellent visual intuitions before you dive into code. After that, try the fast.ai Practical Deep Learning course." },
 ];
 
 export default function DashboardPage() {

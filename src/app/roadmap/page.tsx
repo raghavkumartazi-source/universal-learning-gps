@@ -189,6 +189,14 @@ export default function RoadmapPage() {
     setStep(3);
   };
 
+  const handleStartOver = () => {
+    setStep(1);
+    setRoadmap(null);
+    setGoal("");
+    setExperience("");
+    setTimeframe("");
+  };
+
   return (
     <div className="min-h-screen pt-20">
       <section className="py-16 relative overflow-hidden">
@@ -363,7 +371,7 @@ export default function RoadmapPage() {
                   </div>
                   <div className="flex gap-3">
                     <button
-                      onClick={() => { setStep(1); setRoadmap(null); setGoal(""); setExperience(""); setTimeframe(""); }}
+                      onClick={handleStartOver}
                       className="btn-secondary px-4 py-2 text-sm"
                     >
                       Start Over
