@@ -8,7 +8,7 @@ const modules = [
   { name: "System Design", progress: 35 },
 ];
 // Small delay avoids revoking the URL before browser download handlers consume it.
-const REVOKE_URL_DELAY_MS = 3000;
+const REVOKE_URL_DELAY_MILLISECONDS = 3000;
 
 export default function DashboardPage() {
   const completed = modules.filter((module) => module.progress === 100).length;
@@ -21,7 +21,7 @@ export default function DashboardPage() {
     link.href = objectUrl;
     link.download = "learning-report.txt";
     link.click();
-    setTimeout(() => URL.revokeObjectURL(objectUrl), REVOKE_URL_DELAY_MS);
+    setTimeout(() => URL.revokeObjectURL(objectUrl), REVOKE_URL_DELAY_MILLISECONDS);
   };
 
   return (

@@ -14,7 +14,7 @@ export default function RoadmapGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [mentorInput, setMentorInput] = useState("");
   const [mentorMessages, setMentorMessages] = useState<MentorMessage[]>([]);
-  const createMessageId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const createMessageId = () => crypto.randomUUID();
 
   const generate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
