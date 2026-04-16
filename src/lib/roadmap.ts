@@ -90,6 +90,11 @@ const careerTracks: Record<
 
 export const careerOptions = Object.keys(careerTracks);
 
+const MIN_WEEKS = 12;
+const BASE_WEEKS = 48;
+const MAX_HOUR_BONUS = 30;
+const WEEKLY_HOUR_MULTIPLIER = 2;
+
 export const generateRoadmap = (goal: string, skillInput: string, weeklyHours: number): RoadmapResult => {
   const track = careerTracks[goal] ?? careerTracks["Software Engineer"];
   const currentSkills = skillInput
@@ -102,7 +107,10 @@ export const generateRoadmap = (goal: string, skillInput: string, weeklyHours: n
   );
 
   const strengths = currentSkills.length ? currentSkills.slice(0, 5) : ["Learning mindset", "Consistency"];
-  const baseWeeks = Math.max(12, 48 - Math.min(30, weeklyHours * 2));
+  const baseWeeks = Math.max(
+    MIN_WEEKS,
+    BASE_WEEKS - Math.min(MAX_HOUR_BONUS, weeklyHours * WEEKLY_HOUR_MULTIPLIER),
+  );
   const phaseWeeks = Math.ceil(baseWeeks / 3);
 
   const roadmap = track.roadmap.map((step, index) => ({

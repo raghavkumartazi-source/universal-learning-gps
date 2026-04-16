@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import { Bot } from "lucide-react";
 import { careerOptions, type RoadmapResult } from "@/lib/roadmap";
 
-type MentorMessage = { role: "user" | "assistant"; text: string };
+type MentorMessage = { id: string; role: "user" | "assistant"; text: string };
 
 export default function RoadmapGeneratorPage() {
   const [goal, setGoal] = useState("Software Engineer");
@@ -14,6 +14,7 @@ export default function RoadmapGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [mentorInput, setMentorInput] = useState("");
   const [mentorMessages, setMentorMessages] = useState<MentorMessage[]>([]);
+  const messageId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
   const generate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,7 +38,7 @@ export default function RoadmapGeneratorPage() {
     const input = mentorInput.trim();
     if (!input) return;
 
-    setMentorMessages((messages) => [...messages, { role: "user", text: input }]);
+    setMentorMessages((messages) => [...messages, { id: messageId(), role: "user", text: input }]);
     setMentorInput("");
 
     const response = await fetch("/api/mentor", {
@@ -47,7 +48,7 @@ export default function RoadmapGeneratorPage() {
     });
 
     const data = (await response.json()) as { reply: string };
-    setMentorMessages((messages) => [...messages, { role: "assistant", text: data.reply }]);
+    setMentorMessages((messages) => [...messages, { id: messageId(), role: "assistant", text: data.reply }]);
   };
 
   return (
@@ -121,8 +122,8 @@ export default function RoadmapGeneratorPage() {
             {mentorMessages.length === 0 ? (
               <p className="text-sm text-white/60">Ask about study plans, interviews, or projects.</p>
             ) : (
-              mentorMessages.map((message, index) => (
-                <p key={`${message.role}-${index}`} className={`max-w-[90%] rounded-xl p-3 text-sm ${message.role === "user" ? "ml-auto bg-[#FF7A00] text-[#1A1A2E]" : "bg-white/10 text-white"}`}>
+              mentorMessages.map((message) => (
+                <p key={message.id} className={`max-w-[90%] rounded-xl p-3 text-sm ${message.role === "user" ? "ml-auto bg-[#FF7A00] text-[#1A1A2E]" : "bg-white/10 text-white"}`}>
                   {message.text}
                 </p>
               ))

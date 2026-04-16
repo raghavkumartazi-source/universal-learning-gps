@@ -15,10 +15,11 @@ export default function DashboardPage() {
     const report = `Universal Learning GPS Report\nCompleted modules: ${completed}/${modules.length}`;
     const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
     const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
+    const objectUrl = URL.createObjectURL(blob);
+    link.href = objectUrl;
     link.download = "learning-report.txt";
     link.click();
-    URL.revokeObjectURL(link.href);
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
   };
 
   return (
