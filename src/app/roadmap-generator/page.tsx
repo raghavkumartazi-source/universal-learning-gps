@@ -14,7 +14,7 @@ export default function RoadmapGeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [mentorInput, setMentorInput] = useState("");
   const [mentorMessages, setMentorMessages] = useState<MentorMessage[]>([]);
-  const generateUniqueMessageId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const createMessageId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
   const generate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,7 +38,7 @@ export default function RoadmapGeneratorPage() {
     const input = mentorInput.trim();
     if (!input) return;
 
-    setMentorMessages((messages) => [...messages, { id: generateUniqueMessageId(), role: "user", text: input }]);
+    setMentorMessages((messages) => [...messages, { id: createMessageId(), role: "user", text: input }]);
     setMentorInput("");
 
     const response = await fetch("/api/mentor", {
@@ -48,7 +48,7 @@ export default function RoadmapGeneratorPage() {
     });
 
     const data = (await response.json()) as { reply: string };
-    setMentorMessages((messages) => [...messages, { id: generateUniqueMessageId(), role: "assistant", text: data.reply }]);
+    setMentorMessages((messages) => [...messages, { id: createMessageId(), role: "assistant", text: data.reply }]);
   };
 
   return (

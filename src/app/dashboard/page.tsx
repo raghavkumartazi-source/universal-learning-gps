@@ -7,6 +7,7 @@ const modules = [
   { name: "Data Structures & Algorithms", progress: 70 },
   { name: "System Design", progress: 35 },
 ];
+// Small delay avoids revoking the URL before browser download handlers consume it.
 const REVOKE_URL_DELAY_MS = 3000;
 
 export default function DashboardPage() {
