@@ -7,6 +7,7 @@ const modules = [
   { name: "Data Structures & Algorithms", progress: 70 },
   { name: "System Design", progress: 35 },
 ];
+const REVOKE_URL_DELAY_MS = 1000;
 
 export default function DashboardPage() {
   const completed = modules.filter((module) => module.progress === 100).length;
@@ -19,7 +20,7 @@ export default function DashboardPage() {
     link.href = objectUrl;
     link.download = "learning-report.txt";
     link.click();
-    setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+    setTimeout(() => URL.revokeObjectURL(objectUrl), REVOKE_URL_DELAY_MS);
   };
 
   return (

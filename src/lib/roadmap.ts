@@ -94,6 +94,7 @@ const MIN_WEEKS = 12;
 const BASE_WEEKS = 48;
 const MAX_HOUR_BONUS = 30;
 const WEEKLY_HOUR_MULTIPLIER = 2;
+const MAX_DISPLAYED_STRENGTHS = 5;
 
 export const generateRoadmap = (goal: string, skillInput: string, weeklyHours: number): RoadmapResult => {
   const track = careerTracks[goal] ?? careerTracks["Software Engineer"];
@@ -106,7 +107,9 @@ export const generateRoadmap = (goal: string, skillInput: string, weeklyHours: n
     (skill) => !currentSkills.some((current) => current.toLowerCase() === skill.toLowerCase()),
   );
 
-  const strengths = currentSkills.length ? currentSkills.slice(0, 5) : ["Learning mindset", "Consistency"];
+  const strengths = currentSkills.length
+    ? currentSkills.slice(0, MAX_DISPLAYED_STRENGTHS)
+    : ["Learning mindset", "Consistency"];
   const baseWeeks = Math.max(
     MIN_WEEKS,
     BASE_WEEKS - Math.min(MAX_HOUR_BONUS, weeklyHours * WEEKLY_HOUR_MULTIPLIER),
