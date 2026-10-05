@@ -1,7 +1,7 @@
 import { BarChart3, BadgeCheck, BookOpen, Bot, BrainCircuit, GraduationCap } from "lucide-react";
 
 const features = [
-  { icon: BrainCircuit, title: "Roadmap Intelligence", description: "AI-generated plans personalized to your goal and available time." },
+  { icon: BrainCircuit, title: "Roadmap Intelligence", description: "Curated career tracks adapted to your goal and available time." },
   { icon: BarChart3, title: "Progress Dashboard", description: "Track completed modules, milestones, and momentum." },
   { icon: GraduationCap, title: "Skill Gap Detection", description: "Discover missing skills and priority learning actions." },
   { icon: BookOpen, title: "Curated Learning", description: "Recommended resources from Coursera, edX, Udemy, YouTube, and more." },

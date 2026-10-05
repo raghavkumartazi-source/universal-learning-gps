@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { Bot } from "lucide-react";
+import { getBrowserClient } from '@/lib/supabase';
+import { savePlan } from '@/lib/learning-store';
 import { careerOptions, type RoadmapResult } from "@/lib/roadmap";
 
 type MentorMessage = { id: string; role: "user" | "assistant"; text: string };
@@ -11,6 +13,9 @@ export default function RoadmapGeneratorPage() {
   const [skills, setSkills] = useState("HTML, CSS, JavaScript");
   const [weeklyHours, setWeeklyHours] = useState("10");
   const [roadmap, setRoadmap] = useState<RoadmapResult | null>(null);
+  const [notice, setNotice] = useState('');
+  const [mentorBusy, setMentorBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [mentorInput, setMentorInput] = useState("");
   const [mentorMessages, setMentorMessages] = useState<MentorMessage[]>([]);
@@ -19,6 +24,7 @@ export default function RoadmapGeneratorPage() {
   const generate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
+    setNotice("");
 
     try {
       const response = await fetch("/api/roadmap", {
@@ -27,7 +33,10 @@ export default function RoadmapGeneratorPage() {
         body: JSON.stringify({ goal, skills, weeklyHours: Number(weeklyHours) }),
       });
       const result = (await response.json()) as RoadmapResult;
+      if (!response.ok) throw new Error((result as unknown as { error?: string }).error ?? "Unable to generate roadmap.");
       setRoadmap(result);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Unable to generate roadmap.");
     } finally {
       setLoading(false);
     }
@@ -36,27 +45,32 @@ export default function RoadmapGeneratorPage() {
   const askMentor = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const input = mentorInput.trim();
-    if (!input) return;
+    if (!input || mentorBusy) return;
 
     setMentorMessages((messages) => [...messages, { id: createMessageId(), role: "user", text: input }]);
     setMentorInput("");
 
-    const response = await fetch("/api/mentor", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: input, goal }),
-    });
+    setMentorBusy(true);
+    try {
+      const client = getBrowserClient();
+      const session = client ? (await client.auth.getSession()).data.session : null;
+      const response = await fetch('/api/mentor', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}) }, body: JSON.stringify({ question: input, goal }) });
+      const data = await response.json() as { reply?: string; mode?: string; error?: string };
+      if (!response.ok || !data.reply) throw new Error(data.error ?? 'Mentor could not reply.');
+      setMentorMessages(messages => [...messages, { id: createMessageId(), role: 'assistant', text: `${data.mode === 'guided' ? 'Guided response (AI is not configured): ' : ''}${data.reply}` }]);
+    } catch (error) { setNotice(error instanceof Error ? error.message : 'Mentor could not reply.'); }
+    finally { setMentorBusy(false); }
 
-    const data = (await response.json()) as { reply: string };
-    setMentorMessages((messages) => [...messages, { id: createMessageId(), role: "assistant", text: data.reply }]);
   };
 
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold">Roadmap Generator</h1>
+      {notice && <p role="status">{notice}</p>}
+      <p className="text-white/70">Roadmaps use curated career tracks. AI mentor answers are available when the service is configured.</p>
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
         <section className="card">
-          <h2 className="mb-4 text-xl font-semibold">Build Your AI Roadmap</h2>
+          <h2 className="mb-4 text-xl font-semibold">Build your learning roadmap</h2>
           <form className="space-y-4" onSubmit={generate}>
             <label className="block text-sm">
               Career Goal
@@ -70,17 +84,23 @@ export default function RoadmapGeneratorPage() {
             </label>
             <label className="block text-sm">
               Current Skills (comma-separated)
-              <input className="mt-1 w-full rounded-xl border border-white/15 bg-[#121226] p-3" value={skills} onChange={(event) => setSkills(event.target.value)} />
+              <input maxLength={2000} className="mt-1 w-full rounded-xl border border-white/15 bg-[#121226] p-3" value={skills} onChange={(event) => setSkills(event.target.value)} />
             </label>
             <label className="block text-sm">
               Weekly Learning Hours
-              <input type="number" min={1} className="mt-1 w-full rounded-xl border border-white/15 bg-[#121226] p-3" value={weeklyHours} onChange={(event) => setWeeklyHours(event.target.value)} />
+              <input type="number" min={1} max={80} className="mt-1 w-full rounded-xl border border-white/15 bg-[#121226] p-3" value={weeklyHours} onChange={(event) => setWeeklyHours(event.target.value)} />
             </label>
-            <button type="submit" className="btn-primary w-full">{loading ? "Generating..." : "Generate Roadmap"}</button>
+            <button disabled={loading} type="submit" className="btn-primary w-full">{loading ? "Generating..." : "Generate Roadmap"}</button>
           </form>
 
           {roadmap && (
             <div className="mt-8 space-y-5">
+              <button className="btn-secondary" disabled={saving} onClick={async () => {
+                setSaving(true);
+                try { await savePlan(roadmap); setNotice('Plan saved. Open your dashboard to track progress.'); }
+                catch (error) { setNotice(error instanceof Error ? error.message : 'Plan could not be saved.'); }
+                finally { setSaving(false); }
+              }}>{saving ? 'Saving…' : 'Save to my dashboard'}</button>
               <h3 className="text-lg font-semibold">Estimated Duration: {roadmap.estimatedDuration}</h3>
               {roadmap.roadmap.map((step) => (
                 <article key={step.title} className="rounded-xl border border-white/10 bg-white/5 p-4">
@@ -130,8 +150,8 @@ export default function RoadmapGeneratorPage() {
             )}
           </div>
           <form onSubmit={askMentor} className="mt-auto flex gap-2">
-            <input value={mentorInput} onChange={(event) => setMentorInput(event.target.value)} placeholder="Ask the AI mentor..." className="w-full rounded-xl border border-white/15 bg-[#121226] p-3 text-sm" />
-            <button type="submit" className="btn-primary px-4">Send</button>
+            <input aria-label="Question for the learning mentor" maxLength={2000} value={mentorInput} onChange={(event) => setMentorInput(event.target.value)} placeholder="Ask the AI mentor..." className="w-full rounded-xl border border-white/15 bg-[#121226] p-3 text-sm" />
+            <button disabled={mentorBusy} type="submit" className="btn-primary px-4">{mentorBusy ? "Thinking…" : "Send"}</button>
           </form>
         </section>
       </div>

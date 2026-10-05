@@ -11,7 +11,7 @@ export default function Home() {
           </p>
           <h1 className="text-4xl font-bold leading-tight md:text-5xl">Your Personalized Roadmap to Success.</h1>
           <p className="text-white/80">
-            Universal Learning GPS helps students and professionals discover what to learn, when to learn it, and how to reach career goals through AI-powered guidance.
+            Universal Learning GPS helps students and professionals discover what to learn, when to learn it, and how to reach career goals through curated career tracks and optional AI mentor guidance.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/signup" className="btn-primary">
@@ -23,7 +23,7 @@ export default function Home() {
           </div>
         </div>
         <div className="card space-y-4">
-          <h2 className="text-xl font-semibold">AI Snapshot</h2>
+          <h2 className="text-xl font-semibold">Example learning snapshot</h2>
           <p className="text-white/75">Goal: Data Scientist • Weekly Capacity: 10h</p>
           <div className="h-3 rounded-full bg-white/10">
             <div className="h-3 w-2/3 rounded-full bg-[#FF7A00]" />
@@ -34,7 +34,7 @@ export default function Home() {
 
       <section className="grid gap-6 md:grid-cols-3">
         {[
-          { icon: Compass, title: "AI-Powered Learning Roadmaps", text: "Get personalized step-by-step plans with realistic timelines." },
+          { icon: Compass, title: "Curated Learning Roadmaps", text: "Get personalized step-by-step plans with realistic timelines." },
           { icon: Route, title: "Skill Gap Analysis", text: "Identify missing skills and get focused recommendations." },
           { icon: Bot, title: "AI Career Mentor", text: "Ask career, interview, and study questions anytime." },
         ].map(({ icon: Icon, title, text }) => (

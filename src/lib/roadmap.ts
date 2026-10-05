@@ -110,15 +110,14 @@ export const generateRoadmap = (goal: string, skillInput: string, weeklyHours: n
   const strengths = currentSkills.length
     ? currentSkills.slice(0, MAX_DISPLAYED_STRENGTHS)
     : ["Learning mindset", "Consistency"];
-  const baseWeeks = Math.max(
+  const baseWeeks = Math.ceil(Math.max(
     MIN_WEEKS,
     BASE_WEEKS - Math.min(MAX_HOUR_BONUS, weeklyHours * WEEKLY_HOUR_MULTIPLIER),
-  );
-  const phaseWeeks = Math.ceil(baseWeeks / 3);
+  ));
 
   const roadmap = track.roadmap.map((step, index) => ({
     ...step,
-    timeline: `Weeks ${index * phaseWeeks + 1}-${(index + 1) * phaseWeeks}`,
+    timeline: `Weeks ${Math.ceil(index * baseWeeks / track.roadmap.length) + 1}-${Math.ceil((index + 1) * baseWeeks / track.roadmap.length)}`,
   }));
 
   return {

@@ -19,7 +19,8 @@ const plans = [
 export default function PricingPage() {
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold">Pricing</h1>
+      <h1 className="text-3xl font-bold">Planned pricing</h1>
+      <p>These are proposed plans. Billing, subscriptions and premium entitlements are not available yet. The current prototype does not charge you.</p>
       <div className="grid gap-5 md:grid-cols-3">
         {plans.map((plan, index) => (
           <article key={plan.name} className={`card ${index === 1 ? "border-[#FF7A00]/70" : ""}`}>
