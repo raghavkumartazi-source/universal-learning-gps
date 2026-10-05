@@ -1,7 +1,7 @@
 const steps = [
   "Sign up and choose your target career goal.",
   "Enter your current skills and weekly learning time.",
-  "Receive an AI-generated roadmap with milestones.",
+  "Receive a curated career roadmap with milestones.",
   "Track progress in your dashboard and refine with mentor chat.",
 ];
 
